@@ -71,6 +71,8 @@
       font-size: 14px;
       width: 100%;
       box-sizing: border-box;
+      resize: vertical;
+      min-height: 60px;
     }
 
     .action-buttons {
@@ -109,14 +111,10 @@
 </head>
 <body>
   <div id="chat-container">
-    <div id="logo">
-      Assistente Finanças com Foco
-    </div>
-    <div id="chat-box">
-      <div class="msg bot">👋 Finanças com Foco: Olá! Eu sou seu mentor financeiro. Vamos conversar sobre dívidas, organização ou planejamento? Estou aqui pra te ajudar com clareza e empatia.</div>
-    </div>
+    <div id="logo">Assistente Finanças com Foco</div>
+    <div id="chat-box"></div>
     <div id="input-area">
-      <input id="user-input" type="text" placeholder="Fale ou digite sua mensagem..." onkeydown="if(event.key === 'Enter'){ sendMessage(); }" />
+      <textarea id="user-input" placeholder="Fale ou digite sua mensagem..." rows="3"></textarea>
       <div class="action-buttons">
         <button class="mic" onclick="startListening()" title="Falar">🎤 Falar</button>
         <button onclick="sendMessage()">Enviar</button>
@@ -131,19 +129,24 @@
     let messages = [
       {
         role: "system",
-        content: "Você é um mentor financeiro amigável que ajuda pessoas a sair das dívidas e organizar sua vida financeira com empatia e clareza."
+        content:
+          "Você é um mentor financeiro altamente empático e objetivo. Sempre responde com linguagem acessível e encorajadora. Use listas numeradas ou com emojis, quebras de linha com \\n, e estrutura bem suas respostas. Ajude o usuário a sair das dívidas com estratégias práticas, simulações com juros compostos, renegociação e planejamento financeiro realista. Evite julgamentos e motive o usuário com clareza e empatia."
       },
       {
         role: "assistant",
-        content: "Olá! Eu sou seu mentor financeiro. Vamos conversar sobre dívidas, organização ou planejamento? Estou aqui pra te ajudar com clareza e empatia."
+        content:
+          "Pra começar da melhor forma possível, me conta rapidinho:\n\n1️⃣ Você já sabe quanto está devendo no total? (Se puder, diga os valores aproximados e com quem é a dívida – banco, cartão, loja etc.)\n2️⃣ Sua renda mensal atual é de quanto?\n3️⃣ Quais são seus gastos fixos mais importantes no mês? (tipo aluguel, luz, alimentação...)\n4️⃣ Você está com o nome negativado ou ainda não chegou nesse ponto?\n5️⃣ Já tentou negociar alguma dívida? Se sim, como foi?\n\nCom essas informações básicas, a gente já consegue montar um diagnóstico financeiro inicial e traçar o melhor caminho para você sair das dívidas com mais tranquilidade e segurança. E sem julgamentos, tá? 💙 Tô aqui pra te ajudar com empatia e soluções reais."
       }
     ];
+
+    // Exibir a mensagem inicial formatada
+    chatBox.innerHTML += `<div class="msg bot">Finanças com Foco: ${messages[1].content.replace(/\n/g, "<br>")}</div>`;
 
     async function sendMessage() {
       const userMessage = userInput.value;
       if (!userMessage.trim()) return;
 
-      chatBox.innerHTML += `<div class="msg user">Você: ${userMessage}</div>`;
+      chatBox.innerHTML += `<div class="msg user">Você: ${userMessage.replace(/\n/g, "<br>")}</div>`;
       messages.push({ role: "user", content: userMessage });
       userInput.value = "";
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -158,8 +161,12 @@
         const data = await response.json();
         const reply = data.reply.content;
 
+        const formattedReply = reply
+          .replace(/\n/g, "<br>")
+          .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
         messages.push({ role: "assistant", content: reply });
-        chatBox.innerHTML += `<div class="msg bot">Finanças com Foco: ${reply}</div>`;
+        chatBox.innerHTML += `<div class="msg bot">Finanças com Foco: ${formattedReply}</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
       } catch (error) {
         chatBox.innerHTML += `<div class="msg" style="color:red;">Erro: Não foi possível responder agora.</div>`;
