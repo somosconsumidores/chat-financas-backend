@@ -126,7 +126,8 @@
     const chatBox = document.getElementById("chat-box");
     const userInput = document.getElementById("user-input");
 
-    let messages = [
+    // Recupera histórico do sessionStorage ou cria um novo
+    let messages = JSON.parse(sessionStorage.getItem("messages")) || [
       {
         role: "system",
         content:
@@ -139,8 +140,19 @@
       }
     ];
 
-    // Exibir a mensagem inicial formatada
-    chatBox.innerHTML += `<div class="msg bot">Finanças com Foco: ${messages[1].content.replace(/\n/g, "<br>")}</div>`;
+    // Mostra a primeira mensagem do assistente ao carregar (apenas se não estiver em histórico)
+    if (!sessionStorage.getItem("messages")) {
+      chatBox.innerHTML += `<div class="msg bot">Finanças com Foco: ${messages[1].content.replace(/\n/g, "<br>")}</div>`;
+    } else {
+      messages.forEach((msg) => {
+        if (msg.role === "user") {
+          chatBox.innerHTML += `<div class="msg user">Você: ${msg.content.replace(/\n/g, "<br>")}</div>`;
+        } else if (msg.role === "assistant") {
+          const formatted = msg.content.replace(/\n/g, "<br>").replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+          chatBox.innerHTML += `<div class="msg bot">Finanças com Foco: ${formatted}</div>`;
+        }
+      });
+    }
 
     async function sendMessage() {
       const userMessage = userInput.value;
@@ -168,6 +180,9 @@
         messages.push({ role: "assistant", content: reply });
         chatBox.innerHTML += `<div class="msg bot">Finanças com Foco: ${formattedReply}</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Atualiza o histórico
+        sessionStorage.setItem("messages", JSON.stringify(messages));
       } catch (error) {
         chatBox.innerHTML += `<div class="msg" style="color:red;">Erro: Não foi possível responder agora.</div>`;
         console.error("Erro:", error);
