@@ -2,10 +2,53 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Finanças com Foco - API</title>
+  <title>Chat Finanças com Foco</title>
 </head>
 <body>
-  <h2>🚀 API do Chat Finanças com Foco está online!</h2>
-  <p>Use o endpoint <code>/chat</code> para enviar mensagens.</p>
+  <div id="chat-container" style="max-width: 400px; margin: 20px auto; font-family: sans-serif;">
+    <div id="chat-box" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; background: #f9f9f9;"></div>
+    <input id="user-input" type="text" placeholder="Digite sua mensagem..." style="width: 80%; padding: 10px; margin-top: 10px;" />
+    <button onclick="sendMessage()" style="padding: 10px;">Enviar</button>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById("chat-box");
+    const userInput = document.getElementById("user-input");
+
+    let messages = [
+      {
+        role: "system",
+        content: "Você é um mentor financeiro amigável que ajuda pessoas a sair das dívidas e organizar sua vida financeira com empatia e clareza."
+      }
+    ];
+
+    async function sendMessage() {
+      const userMessage = userInput.value;
+      if (!userMessage.trim()) return;
+
+      chatBox.innerHTML += `<div><strong>Você:</strong> ${userMessage}</div>`;
+      messages.push({ role: "user", content: userMessage });
+      userInput.value = "";
+
+      try {
+        const response = await fetch("https://chat-financas-backend.onrender.com/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages }),
+        });
+
+        const data = await response.json();
+        const reply = data.reply.content;
+
+        messages.push({ role: "assistant", content: reply });
+        chatBox.innerHTML += `<div><strong>Finanças com Foco:</strong> ${reply}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      } catch (error) {
+        console.error("Erro ao enviar mensagem:", error);
+        chatBox.innerHTML += `<div style="color:red;"><strong>Erro:</strong> Não foi possível responder agora.</div>`;
+      }
+    }
+  </script>
 </body>
 </html>
+
