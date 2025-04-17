@@ -60,18 +60,26 @@
     #input-area {
       margin-top: 10px;
       display: flex;
+      flex-direction: column;
       gap: 8px;
     }
 
     #user-input {
-      flex: 1;
       padding: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
       font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
     }
 
     button {
+      flex: 1;
       padding: 10px 14px;
       background-color: #003366;
       color: white;
@@ -85,14 +93,16 @@
       background-color: #004a99;
     }
 
-    button[title="Falar"] {
-      font-size: 16px;
+    .mic {
       background-color: #ff6600;
     }
 
     @media screen and (max-width: 500px) {
       #chat-container {
         padding: 15px;
+      }
+      .action-buttons {
+        flex-direction: column;
       }
     }
   </style>
@@ -107,8 +117,10 @@
     </div>
     <div id="input-area">
       <input id="user-input" type="text" placeholder="Fale ou digite sua mensagem..." onkeydown="if(event.key === 'Enter'){ sendMessage(); }" />
-      <button onclick="startListening()" title="Falar">🎤</button>
-      <button onclick="sendMessage()">Enviar</button>
+      <div class="action-buttons">
+        <button class="mic" onclick="startListening()" title="Falar">🎤 Falar</button>
+        <button onclick="sendMessage()">Enviar</button>
+      </div>
     </div>
   </div>
 
