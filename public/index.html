@@ -1,14 +1,111 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chat Finanças com Foco</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      padding-top: 40px; /* Garantir espaço no topo em celulares */
+    }
+
+    #chat-container {
+      background: white;
+      max-width: 450px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    #logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #003366;
+    }
+
+    #chat-box {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      background: #f9f9f9;
+      font-size: 14px;
+    }
+
+    .msg {
+      margin: 8px 0;
+    }
+
+    .user {
+      font-weight: 600;
+      color: #003366;
+    }
+
+    .bot {
+      font-weight: 600;
+      color: #ff6600;
+    }
+
+    #input-area {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 14px;
+      background-color: #003366;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background-color: #004a99;
+    }
+
+    @media screen and (max-width: 500px) {
+      #chat-container {
+        padding: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div id="chat-container" style="max-width: 400px; margin: 20px auto; font-family: sans-serif;">
-    <div id="chat-box" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; background: #f9f9f9;"></div>
-    <input id="user-input" type="text" placeholder="Digite sua mensagem..." style="width: 80%; padding: 10px; margin-top: 10px;" />
-    <button onclick="sendMessage()" style="padding: 10px;">Enviar</button>
+  <div id="chat-container">
+    <div id="logo">
+      Assistente Finanças com Foco
+    </div>
+    <div id="chat-box">
+      <div class="msg bot">👋 <strong>Finanças com Foco:</strong> Olá! Eu sou seu mentor financeiro. Vamos conversar sobre dívidas, organização ou planejamento? Estou aqui pra te ajudar com clareza e empatia.</div>
+    </div>
+    <div id="input-area">
+      <input id="user-input" type="text" placeholder="Digite sua mensagem..." />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
   </div>
 
   <script>
@@ -19,6 +116,10 @@
       {
         role: "system",
         content: "Você é um mentor financeiro amigável que ajuda pessoas a sair das dívidas e organizar sua vida financeira com empatia e clareza."
+      },
+      {
+        role: "assistant",
+        content: "Olá! Eu sou seu mentor financeiro. Vamos conversar sobre dívidas, organização ou planejamento? Estou aqui pra te ajudar com clareza e empatia."
       }
     ];
 
@@ -26,29 +127,29 @@
       const userMessage = userInput.value;
       if (!userMessage.trim()) return;
 
-      chatBox.innerHTML += `<div><strong>Você:</strong> ${userMessage}</div>`;
+      chatBox.innerHTML += `<div class="msg user"><strong>Você:</strong> ${userMessage}</div>`;
       messages.push({ role: "user", content: userMessage });
       userInput.value = "";
+      chatBox.scrollTop = chatBox.scrollHeight;
 
       try {
         const response = await fetch("https://chat-financas-backend.onrender.com/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages }),
+          body: JSON.stringify({ messages })
         });
 
         const data = await response.json();
         const reply = data.reply.content;
 
         messages.push({ role: "assistant", content: reply });
-        chatBox.innerHTML += `<div><strong>Finanças com Foco:</strong> ${reply}</div>`;
+        chatBox.innerHTML += `<div class="msg bot"><strong>Finanças com Foco:</strong> ${reply}</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
       } catch (error) {
-        console.error("Erro ao enviar mensagem:", error);
-        chatBox.innerHTML += `<div style="color:red;"><strong>Erro:</strong> Não foi possível responder agora.</div>`;
+        chatBox.innerHTML += `<div class="msg" style="color:red;"><strong>Erro:</strong> Não foi possível responder agora.</div>`;
+        console.error("Erro:", error);
       }
     }
   </script>
 </body>
 </html>
-
