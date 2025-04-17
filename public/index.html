@@ -9,7 +9,7 @@
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: #4743C4; /* Cor de fundo geral */
+      background-color: #4743C4;
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -22,7 +22,7 @@
       max-width: 450px;
       width: 100%;
       border-radius: 12px;
-      box-shadow: 0 0 0 3px #4743C4; /* Contorno do chat */
+      box-shadow: 0 0 0 3px #4743C4;
       padding: 20px;
     }
 
@@ -50,12 +50,10 @@
     }
 
     .user {
-      font-weight: 600;
       color: #003366;
     }
 
     .bot {
-      font-weight: 600;
       color: #ff6600;
     }
 
@@ -100,10 +98,10 @@
       Assistente Finanças com Foco
     </div>
     <div id="chat-box">
-      <div class="msg bot">👋 <strong>Finanças com Foco:</strong> Olá! Eu sou seu mentor financeiro. Vamos conversar sobre dívidas, organização ou planejamento? Estou aqui pra te ajudar com clareza e empatia.</div>
+      <div class="msg bot">👋 Finanças com Foco: Olá! Eu sou seu mentor financeiro. Vamos conversar sobre dívidas, organização ou planejamento? Estou aqui pra te ajudar com clareza e empatia.</div>
     </div>
     <div id="input-area">
-      <input id="user-input" type="text" placeholder="Digite sua mensagem..." />
+      <input id="user-input" type="text" placeholder="Digite sua mensagem..." onkeydown="if(event.key === 'Enter'){ sendMessage(); }" />
       <button onclick="sendMessage()">Enviar</button>
     </div>
   </div>
@@ -127,7 +125,7 @@
       const userMessage = userInput.value;
       if (!userMessage.trim()) return;
 
-      chatBox.innerHTML += `<div class="msg user"><strong>Você:</strong> ${userMessage}</div>`;
+      chatBox.innerHTML += `<div class="msg user">Você: ${userMessage}</div>`;
       messages.push({ role: "user", content: userMessage });
       userInput.value = "";
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -143,10 +141,10 @@
         const reply = data.reply.content;
 
         messages.push({ role: "assistant", content: reply });
-        chatBox.innerHTML += `<div class="msg bot"><strong>Finanças com Foco:</strong> ${reply}</div>`;
+        chatBox.innerHTML += `<div class="msg bot">Finanças com Foco: ${reply}</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
       } catch (error) {
-        chatBox.innerHTML += `<div class="msg" style="color:red;"><strong>Erro:</strong> Não foi possível responder agora.</div>`;
+        chatBox.innerHTML += `<div class="msg" style="color:red;">Erro: Não foi possível responder agora.</div>`;
         console.error("Erro:", error);
       }
     }
