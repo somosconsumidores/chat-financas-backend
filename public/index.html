@@ -85,6 +85,11 @@
       background-color: #004a99;
     }
 
+    button[title="Falar"] {
+      font-size: 16px;
+      background-color: #ff6600;
+    }
+
     @media screen and (max-width: 500px) {
       #chat-container {
         padding: 15px;
@@ -101,7 +106,8 @@
       <div class="msg bot">👋 Finanças com Foco: Olá! Eu sou seu mentor financeiro. Vamos conversar sobre dívidas, organização ou planejamento? Estou aqui pra te ajudar com clareza e empatia.</div>
     </div>
     <div id="input-area">
-      <input id="user-input" type="text" placeholder="Digite sua mensagem..." onkeydown="if(event.key === 'Enter'){ sendMessage(); }" />
+      <input id="user-input" type="text" placeholder="Fale ou digite sua mensagem..." onkeydown="if(event.key === 'Enter'){ sendMessage(); }" />
+      <button onclick="startListening()" title="Falar">🎤</button>
       <button onclick="sendMessage()">Enviar</button>
     </div>
   </div>
@@ -147,6 +153,24 @@
         chatBox.innerHTML += `<div class="msg" style="color:red;">Erro: Não foi possível responder agora.</div>`;
         console.error("Erro:", error);
       }
+    }
+
+    function startListening() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'pt-BR';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+
+      recognition.onresult = (event) => {
+        const speechResult = event.results[0][0].transcript;
+        userInput.value = speechResult;
+      };
+
+      recognition.onerror = (event) => {
+        alert('Erro ao reconhecer voz: ' + event.error);
+      };
     }
   </script>
 </body>
